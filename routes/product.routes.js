@@ -3,17 +3,17 @@ const router = express.Router();
 const multer = require('multer');
 const productController = require('../controllers/product.controller');
 
-// setting multer
-const upload = multer({
-    dest: "public/uploads",
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/gif') {
-            cb(null, true); // allow
-        } else {
-            cb(new Error('Only .png, .jpeg and .gif for,at allowed'), false); //reject
-        }
+// configure Multer storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'D:/2-2568/webdev/assignment/lab8/public/uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
     }
 });
+
+const upload = multer({storage: storage});
 
 // get method
 router.get('/add', productController.addProductPage);

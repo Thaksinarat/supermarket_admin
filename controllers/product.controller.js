@@ -1,28 +1,31 @@
 exports.addProductPage = (req, res) => {
     res.render('add-product.ejs', {
         title: 'Supermarket Admin | Add New Product',
-        message: ''
+        message: '',
+        messageName: '',
+        messageFile: '',
     })
 }
 
 exports.addProduct = (req, res) => {
-    // ถ้าไม่ work ให้เปลี่ยนไปใช้ req.file แทน
-    let name = req.body.name;
-
-    if (!name) {
-        return res.status(400).send('No name was applied.');
-    }
-    //
-
     let message = '';
+    let messageName = '';
+    let messageFile = '';
+    let name = req.body.name;
     let category = req.body.category;
     let price = req.body.price;
     let stock = req.body.stock;
     let uploadedFile = req.file;
-    let imageName = uploadedFile.name;
-    let fileExtension = uploadedFile.mimetype.split('/')[1];
-    imageName = name + '.' + fileExtension;
 
+    if (!name) {
+        messageName = 'Please enter product name!';
+        return res.render('add-product.ejs', {
+            title: 'Supermarket Admin | Add New Product',
+            message,
+            messageName: messageName,
+            messageFile
+        });
+    }
 
     // จะใช้เป็นตัวตรวจเพื่อป้องกันไม่ให้ของซ้ำกัน * ถ้าไม่ work ก็ไม่ต้องตรวจ TT
     let nameQuery = 'SELECT * FROM products WHERE name = ?';
@@ -34,27 +37,46 @@ exports.addProduct = (req, res) => {
         }
 
         if (result.length > 0) {
-            message = 'Product already exists.';
-            res.render('add-product.ejs', {
+            messageName = 'Product already exists.';
+            return res.render('add-product.ejs', {
+                title: 'Supermarket Admin | Add New Product',
                 message,
-                title: 'Supermarket Admin | Add New Product'
+                messageName: messageName,
+                messageFile
             });
         } else {
             if (!uploadedFile) {
-                return res.status(400).send('Please upload file.');
-                res.render('add-product.ejs', {
+                messageFile = 'Please select file to upload!'
+                return res.render('add-product.ejs', {
+                    title: 'Supermarket Admin | Add New Product',
                     message,
-                    title: 'Supermarket Admin | Add New Product'
+                    messageName,
+                    messageFile: messageFile
+                });
+            }
+            // เช็คนามสกุลไฟล์
+            let fileType = uploadedFile.filename.split('.')[1].toLowerCase();
+
+            if (fileType == 'png' || fileType == 'jpeg' || fileType == 'jpg' || fileType == 'gif') {
+                
+                let query = 'INSERT INTO products(name, category, price, stock, image) VALUES(?, ?, ?, ?, ?)';
+                db.execute(query, [name, category, price, stock, uploadedFile.filename], (err, result) => {
+                    if (err) {
+                        return res.status(500).send(err);
+                    }
+                    res.redirect('/');
+                });
+            } else {
+                messageFile = 'Only .png, .jpeg, .jpg, .gif are allowed!'
+                return res.render('add-product.ejs', {
+                    title: 'Supermarket Admin | Add New Product',
+                    message,
+                    messageName,
+                    messageFile: messageFile
                 });
             }
 
-            let query = 'INSERT INTO products(name, category, price, stock, image) VALUES(?, ?, ?, ?, ?)';
-            db.execute(query, [name, category, price, stock, imageName], (err, result) => {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                res.redirect('/');
-            });
+
         }
     })
 }

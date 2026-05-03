@@ -10,11 +10,6 @@
                     <div class="mb-3">
                         <label for="name" class="form-label">Product Name</label>
                         <input type="text" class="form-control" name="name" required />
-                        <% if (message !='' ) { %>
-                            <p class="text-danger">
-                                <%= message %>
-                            </p>
-                            <% } %>
                     </div>
 
                     <div class="mb-3">
@@ -57,6 +52,16 @@
                         <label class="input-group-text" for="product image">Product Image</label>
                         <input type="file" class="form-control" name="image" required>
                     </div>
+
+                    <% if (messageFile != '') { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= messageFile %>
+                        </div>
+                    <%} else if (messageName !='' ) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= messageName %>
+                            </div>
+                    <% } %>
 
                     <div class="text-end">
                         <button type="submit" class="btn btn-success">Add Product</button>
