@@ -3,8 +3,10 @@
 
         <div class="container mt-5 pt-4">
             <div class="py-3">
-                <a href="/" class="btn btn-light my-2">Back</a>
-                <h4><%= title%></h4>
+                <a href="/" class="btn btn-light my-2">Cancle</a>
+                <h4>
+                    <%= title%>
+                </h4>
                 <hr>
                 <form action="/add" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
@@ -53,19 +55,19 @@
                         <input type="file" class="form-control" name="image" required>
                     </div>
 
-                    <% if (messageFile != '') { %>
+                    <% if (messageFile !='' ) { %>
                         <div class="alert alert-danger" role="alert">
                             <%= messageFile %>
                         </div>
-                    <%} else if (messageName !='' ) { %>
+                        <%} else if (messageName !='' ) { %>
                             <div class="alert alert-danger" role="alert">
                                 <%= messageName %>
                             </div>
-                    <% } %>
+                            <% } %>
 
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-success">Add Product</button>
-                    </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-success">Add Product</button>
+                                </div>
                 </form>
             </div>
         </div>
