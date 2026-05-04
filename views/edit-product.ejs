@@ -1,0 +1,88 @@
+<%- include('partials/header.ejs') %>
+    <%- include('partials/navbar.ejs') %>
+
+        <div class="container mt-5 pt-4">
+            <div class="py-3">
+                <a href="/" class="btn btn-light my-2">Back</a>
+                <h4>
+                    <%= title%>
+                </h4>
+                <hr>
+
+                <% if (product) { %>
+                    <form action="/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" name="name" value="<%= product.name %>" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="visually-hidden" for="inlineFormSelectPref">Category</label>
+                            <select class="form-select" name="category">
+                                <option selected>
+                                    <%= product.category%>
+                                </option>
+                                <option>Baby Items</option>
+                                <option>Baking</option>
+                                <option>Beverages</option>
+                                <option>Bread & Bakery</option>
+                                <option>Canned Goods</option>
+                                <option>Condiments & Spices</option>
+                                <option>Dairy</option>
+                                <option>Deli</option>
+                                <option>Fruits</option>
+                                <option>Fish & Seafood</option>
+                                <option>Frozen Foods</option>
+                                <option>Health Care</option>
+                                <option>Household & Cleaning Supplies</option>
+                                <option>Meat</option>
+                                <option>Pasta, Rice & Cereal</option>
+                                <option>Personal Care</option>
+                                <option>Pet Care</option>
+                                <option>Snacks</option>
+                                <option>Vegetables</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Product Price</label>
+                            <input type="number" class="form-control" name="price" value="<%= product.price%>" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" name="stock" min="0"
+                                value="<%= product.stock%>" />
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <label class="input-group-text" for="product image">Product Image</label>
+                            <input type="file" class="form-control" name="image">
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="hidden" value="<%= product.image%>" name="old_image">
+                            <img width="300" src="/uploads/<%= product.image%>" alt="<%= product.image%>">
+                        </div>
+
+                        <% if (messageFile !='' ) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= messageFile %>
+                            </div>
+                            <%} else if (messageName !='' ) { %>
+                                <div class="alert alert-danger" role="alert">
+                                    <%= messageName %>
+                                </div>
+                                <% } %>
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-success">Update Product</button>
+                                    </div>
+                    </form>
+                    <% } else { %>
+                        <p class="text-center">Product not found.</p>
+                        <% } %>
+            </div>
+        </div>
+
+        <%- include('partials/footer.ejs') %>
