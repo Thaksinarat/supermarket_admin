@@ -115,7 +115,7 @@ exports.editProduct = (req, res) => {
 
     if (uploadedFile) {
         // มีไฟล์ใหม่
-        let imageName = uploadedFile.filename;
+        imageName = uploadedFile.filename;
 
         let fileType = imageName.split('.')[1].toLowerCase();
 
@@ -123,7 +123,9 @@ exports.editProduct = (req, res) => {
 
             let query = "UPDATE products SET name=?, category=?, price=?, stock=?, image=? WHERE id=?";
             db.execute(query, [name, category, price, stock, imageName, productId], (err, result) => {
-                if (err) return res.status(500).send(err);
+                if (err) {
+                    return res.status(500).send(err);
+                }
                 res.redirect('/');
             });
 
@@ -132,10 +134,12 @@ exports.editProduct = (req, res) => {
         }
 
     } else {
-    
+
         let query = "UPDATE products SET name=?, category=?, price=?, stock=?, image=? WHERE id=?";
         db.execute(query, [name, category, price, stock, oldImage, productId], (err, result) => {
-            if (err) return res.status(500).send(err);
+            if (err) {
+                return res.status(500).send(err);
+            }
             res.redirect('/');
         });
     }
@@ -166,6 +170,6 @@ exports.deleteProduct = (req, res) => {
                 res.redirect('/');
             })
         })
-        
+
     })
 }
