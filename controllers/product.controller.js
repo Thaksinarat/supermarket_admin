@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 exports.addProductPage = (req, res) => {
     res.render('add-product.ejs', {
@@ -70,6 +71,7 @@ exports.addProduct = (req, res) => {
                 });
             } else {
                 messageFile = 'Only .png, .jpeg, .jpg, .gif are allowed!'
+                fs.unlinkSync(path.join('public/uploads', uploadedFile.filename));
                 return res.render('add-product.ejs', {
                     title: '➕ Add Product',
                     message,
@@ -121,6 +123,14 @@ exports.editProduct = (req, res) => {
 
         if (fileType == 'png' || fileType == 'jpeg' || fileType == 'jpg' || fileType == 'gif') {
 
+            imageName = uploadedFile.filename;
+            if (oldImage) {
+                let oldPath = path.join('public/uploads', oldImage);
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+
             let query = "UPDATE products SET name=?, category=?, price=?, stock=?, image=? WHERE id=?";
             db.execute(query, [name, category, price, stock, imageName, productId], (err, result) => {
                 if (err) {
@@ -130,7 +140,27 @@ exports.editProduct = (req, res) => {
             });
 
         } else {
-            return res.send('Invalid file type');
+            let wrongFile = path.join('public/uploads', uploadedFile.filename);
+            if (fs.existsSync(wrongFile)) {
+                fs.unlinkSync(wrongFile);
+            }
+
+            let query = 'SELECT * FROM products WHERE id = ?';
+            db.execute(query, [productId], (err, result) => {
+                if (err) {
+                    res.status(500).send(er);
+                }
+                messageFile = 'Only .png, .jpeg, .jpg, .gif are allowed!'
+                res.render('edit-product.ejs', {
+                    title: '✏️ Edit Product',
+                    product: result[0],
+                    message: '',
+                    messageName: '',
+                    messageFile: messageFile,
+                });
+            });
+
+
         }
 
     } else {
